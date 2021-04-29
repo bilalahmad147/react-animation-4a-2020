@@ -3,24 +3,51 @@ import useWebAnimations from "@wellyshen/use-web-animations";
 import "./RunningAlice.css";
 
 const ParentComp = () => {
-  const { ref, playState } = useWebAnimations({
-    keyframes: {
-      transform: "rotate(0) translate3D(-50%, -50%, 0)",
-      color: "#000",
-      color: "#431236",
-      offset: 0.3,
-      transform: "rotate(360deg) translate3D(-50%, -50%, 0)",
-      color: "#000",
-    },
-    animationOptions: {
-      duration: 15000,
-      iteration: Infinity,
-    }
+  const { ref, playState, getAnimation } = useWebAnimations({
+    keyframes: { transform: "translateX(500px)" },
+    animationOptions: { duration: 1000, fill: "forwards", iterations: Infinity, direction: "alternate" },
   });
 
+  const play = () => {
+    getAnimation().play();
+  };
+
+  const pause = () => {
+    getAnimation().pause();
+  };
+
+  const reverse = () => {
+    getAnimation().reverse();
+  };
+
+  const cancel = () => {
+    getAnimation().cancel();
+  };
+
+  const finish = () => {
+    getAnimation().finish();
+  };
+
+  const seek = (e) => {
+    const animation = getAnimation();
+    const time = (animation.effect.getTiming().duration / 100) * e.target.value;
+    animation.currentTime = time;
+  };
+
+  const updatePlaybackRate = (e) => {
+    getAnimation().updatePlaybackRate(e.target.value);
+  };
+
   return (
-    <div>
-      <div ref={ref} className="mainDiv"></div>
+    <div className="container">
+      <button onClick={play}>Play</button>
+      <button onClick={pause}>Pause</button>
+      <button onClick={reverse}>Reverse</button>
+      <button onClick={cancel}>Cancel</button>
+      <button onClick={finish}>Finish</button>
+      <input type="range" onChange={seek} />
+      <input type="number" defaultValue="1" onChange={updatePlaybackRate} />
+      <div className="target" ref={ref} />
     </div>
   );
 };
